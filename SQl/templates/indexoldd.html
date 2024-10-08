@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Chatbot</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>SQL Query Executor</h1>
+    <form id="queryForm">
+        <textarea id="queryInput" rows="5" cols="60" placeholder="Enter your SQL query here..."></textarea>
+        <br><br>
+        <button type="submit">Run Query</button>
+    </form>
+    <br>
+    <div id="output"></div>
+
+    <script>
+        $(document).ready(function() {
+            $('#queryForm').on('submit', function(event) {
+                event.preventDefault();
+                const userQuery = $('#queryInput').val();
+                
+                $.ajax({
+                    url: '/chatbot',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ query: userQuery }),
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            $('#output').html('<pre>' + JSON.stringify(response.result, null, 2) + '</pre>');
+                        } else {
+                            $('#output').html('<pre>' + response.error + '</pre>');
+                        }
+                    },
+                    error: function(error) {
+                        $('#output').html('<pre>Error: ' + error.responseText + '</pre>');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
